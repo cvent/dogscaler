@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'yaml'
+require 'thor'
+require 'virtus'
+
+require_relative '../lib/logging'
+require_relative '../lib/settings'
+require_relative '../lib/dogscaler/config'
+require_relative '../lib/dogscaler/instance'
+require_relative '../lib/dogscaler/datadog'
+require_relative '../lib/dogscaler/awsclient'
+require_relative '../lib/dogscaler/cli'
+
+
+Dogscaler::Cli.start(ARGV)

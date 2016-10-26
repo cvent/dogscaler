@@ -1,0 +1,30 @@
+datadog:
+  api_key: <KEYHERE>
+  application_key: <KEYHERE>
+aws:
+  region: 'us-west-2'
+  profile: 'main'
+instances:
+  -
+    name: 'nginx wait in dev'
+    query: "max:nginx.net.waiting{env:dev}"
+    autoscale_group: "development"
+    scale_up_threshhold: 75
+    scale_down_threshhold: 20
+    grow_by: 2
+    shrink_by: 1
+    transform: avg
+  -
+    name: 'nginx wait in prod'
+    query: "max:nginx.net.waiting{env:production}"
+    asg_tag_filters:
+      Type: web
+      Environment: production
+    scale_up_threshhold: 10
+    scale_down_threshhold: 5
+    grow_by: 2
+    shrink_by: 1
+    transform: min
+
+
+
