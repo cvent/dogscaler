@@ -53,8 +53,9 @@ Create a dogscaler.yaml file with contents like:
 Below are some simple examples
 
 Basic example: Apply the configuration.
-```bash
-$ dogscaler apply -c dogscaler.yaml
+
+```
+  $ dogscaler apply -c dogscaler.yaml
 ```
 
 Test the configuration without making changes, with verbose output:
