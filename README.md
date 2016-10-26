@@ -24,9 +24,9 @@ Create a dogscaler.yaml file with contents like:
     profile: 'main'  # This expects a .aws/credentials file with a section matching this name
   instances:
     -
-      name: 'nginx waiting in dev'               # name/description for what this scaling instance event is called.
-      query: "max:nginx.net.waiting{env:dev}"    # Datadog metric to query
-      autoscale_group: "dev"        # Static name of autoscale group to scale  
+      name: 'web cpu usage in prod'                         # name/description for what this scaling instance event is called.
+      query: "avg:system.cpu.user{env:production,type:web}" # Datadog metric to query
+      autoscale_group: "web"        # Static name of autoscale group to scale  
       scale_up_threshhold: 75       # Theshold to scale if the data returned is greater
       scale_down_threshhold: 20     # Threshold to scale down if the data is less 
       grow_by: 2                    # How many instances to increase
