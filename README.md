@@ -14,7 +14,8 @@ gem install dogscaler
 ## Configuration
 Create a dogscaler.yaml file with contents like:
 
-  ```
+```
+
   datadog:
     api_key: <KEYHERE>
     application_key: <KEYHERE>
@@ -44,7 +45,7 @@ Create a dogscaler.yaml file with contents like:
       shrink_by: 1
       transform: avg
 
-  ```
+```
 
 ## Usage
 
