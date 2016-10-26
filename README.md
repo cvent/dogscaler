@@ -52,7 +52,7 @@ Create a dogscaler.yaml file with contents like:
 
 Below are some simple examples
 
-Basic example: Apply the configuration.
+The basic example - Apply the configuration.
 
 ```
   $ dogscaler apply -c dogscaler.yaml
