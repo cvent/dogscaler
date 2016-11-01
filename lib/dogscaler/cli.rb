@@ -1,5 +1,6 @@
-require 'facets'
 require 'logger'
+# Used for the symbolize_keys method
+require 'facets'
 
 module Dogscaler
   class Cli < Thor
@@ -19,7 +20,18 @@ module Dogscaler
 
 
     #logger.level = options[:debug] ? Logger::DEBUG : Logger::INFO
-
+    desc "debug", "testing command, describes the query it ran and the results"
+    def debug
+      Settings.load!(File.expand_path(options[:config])) if options[:config]
+      Settings.instances.each do |i|
+        instance = Dogscaler::Instance.new
+        instance.attributes = i.symbolize_keys
+        dd_client = Dogscaler::Datadog.new(Settings.datadog)
+        require 'pp'
+        pp instance.query
+        dd_client.process(instance)
+      end
+    end
     desc "config", "Generate a default configuration"
     def config
       Dogscaler::Config.new.generate
