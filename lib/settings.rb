@@ -28,7 +28,5 @@ module Settings
 
 end
 app_name = "dogscaler"
-defaults = File.dirname(__FILE__) + "/../#{app_name}.yaml"
 overrides = File.expand_path("~/.#{app_name}.yaml")
-Settings.load!(defaults)
 Settings.load!(overrides) if File.exists? overrides
