@@ -4,16 +4,20 @@ module Dogscaler
   class AwsClient
     NoResultsError = Class.new(StandardError)
     include Logging
+
     def initialize
       @credentials = Aws::SharedCredentials.new(profile_name: Settings.aws['profile'])
       @region = Settings.aws['region']
     end
+
     def asg_client
       @asg_client ||= Aws::AutoScaling::Client.new(credentials: @credentials, :region => @region)
     end
+
     def ec2_client
       @ec2_client ||= Aws::EC2::Client.new(credentials: @credentials, :region => @region)
     end
+
     def get_asg(asg_name=nil, asg_tag_filters = {})
       #asg_client.describe_auto_scaling_groups({auto_scaling_group_names: \
       #[asg_name] }).auto_scaling_groups.first
@@ -47,6 +51,7 @@ module Dogscaler
         return autoscalegroups
       end
     end
+
     def validate_tags(tags, filters)
       values = []
       filters.each do |key, value|
@@ -68,10 +73,12 @@ module Dogscaler
       # we're good if the results are all good
       values.all?
     end
+
     def get_capacity(asg_name)
       asg_client.describe_auto_scaling_groups({auto_scaling_group_names: \
         [asg_name] }).auto_scaling_groups.first.desired_capacity
     end
+
     def set_capacity(instance, desired_capacity, options)
       template = {
         auto_scaling_group_name: instance.autoscale_group,
@@ -83,8 +90,8 @@ module Dogscaler
         logger.info "Not updating due to dry run mode"
       	logger.debug template
       else
-	    asg_client.update_auto_scaling_group(template)
-	  end
+	      asg_client.update_auto_scaling_group(template)
+	    end
     end
   end
 end

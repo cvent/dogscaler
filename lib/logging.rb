@@ -9,9 +9,11 @@ module Logging
     def logger=(logger)
       @logger = logger
     end
+
     def level=(level)
       @logger.level=level
     end
+
     def warn
       @logger.level=Logger::WARN
     end
