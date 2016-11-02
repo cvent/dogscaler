@@ -39,7 +39,7 @@ instances:
     transform: avg              # What transform to use on the query, eg (min,max,last,avg,count)
 
 END
-      puts config
+        puts config
       end
   end
 end

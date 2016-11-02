@@ -43,6 +43,7 @@ module Dogscaler
       logger.debug "Transformed value #{result}"
       result
     end
+
     def status
       raise NoResultSetError, 'No results set on this object' if not result
       if result > scale_up_threshhold

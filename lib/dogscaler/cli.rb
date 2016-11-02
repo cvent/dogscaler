@@ -32,10 +32,12 @@ module Dogscaler
         dd_client.process(instance)
       end
     end
+
     desc "config", "Generate a default configuration"
     def config
       Dogscaler::Config.new.generate
     end
+
     desc "apply", "Scale the environment based on a query"
     def apply
       Settings.load!(File.expand_path(options[:config])) if options[:config]
