@@ -20,5 +20,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dogapi', '~> 1.23'
   spec.add_dependency 'virtus', '~> 1.0.5'
   spec.add_dependency 'facets', '~> 3.1.0'
+  spec.add_dependency 'aws-sdk', '~> 2.6'
+
 
 end
