@@ -16,9 +16,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.9"
-  spec.add_dependency "thor", '~> 0'
+  spec.add_dependency "thor", '~> 0.19.1'
   spec.add_dependency 'dogapi', '~> 1.23'
   spec.add_dependency 'virtus', '~> 1.0.5'
-  spec.add_dependency 'facets', '~> 0'
+  spec.add_dependency 'facets', '~> 3.1.0'
 
 end
