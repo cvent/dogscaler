@@ -56,8 +56,8 @@ module Dogscaler
       values = []
       filters.each do |key, value|
         trueness = false
+        logger.debug "Checking: #{key} for: #{value}"
         tags.each do |tag|
-          logger.debug "Checking: #{key} for: #{value}"
           if tag['key'] == key
             logger.debug "Key: #{key} matches"
             logger.debug "Comparing: #{tag['value']} to: #{value}"
@@ -84,8 +84,8 @@ module Dogscaler
         auto_scaling_group_name: instance.autoscale_group,
         desired_capacity: desired_capacity,
       }
-      logger.info "Updating autoscale group #{instance.autoscale_group}"
-      logger.info "From current capacity: #{instance.capacity} to: #{desired_capacity}"
+      logger.warn "Updating autoscale group #{instance.autoscale_group}"
+      logger.warn "From current capacity: #{instance.capacity} to: #{desired_capacity}"
       if options[:dryrun]
         logger.info "Not updating due to dry run mode"
       	logger.debug template
