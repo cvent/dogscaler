@@ -12,6 +12,22 @@ gem install dogscaler
 ```
 
 ## Configuration
+### Datadog API
+
+Within datadog, you need to generate an application key and also include your api key. You can find this information from 
+Integrations -> Api
+
+
+### Amazon Permissions
+
+Create a set of credentials in IAM and give them access to:
+Autoscale -> DescribeAutoscaleGroups and
+Autoscale -> UpdateAutoscaleGroups
+
+These permissions are used to lookup autoscale groups, check their size and updated the desired number of instances.
+
+
+### Config File
 Create a dogscaler.yaml file with contents like:
 
 ```
