@@ -72,7 +72,11 @@ module Dogscaler
           case instance.status
           when 'grow'
             if instance.capacity < instance.max_instances
-              aws.set_capacity(instance, instance.grow_by, options)
+              if instance.max_instances == 0
+                logger.warn "Would have increased capacity of #{instance.autoscale_group} but current value is 0"
+              else
+                aws.set_capacity(instance, instance.grow_by, options)
+              end
             else
               logger.warn "Would have increased capacity of #{instance.autoscale_group} but already at maximum."
               logger.warn "Current desired: #{instance.capacity}"
