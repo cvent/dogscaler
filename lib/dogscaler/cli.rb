@@ -75,7 +75,8 @@ module Dogscaler
               if instance.max_instances == 0
                 logger.warn "Would have increased capacity of #{instance.autoscale_group} but current value is 0"
               else
-                aws.set_capacity(instance, instance.grow_by, options)
+                change = instance.capacity + instance.grow_by
+                aws.set_capacity(instance, change.to_i, options)
               end
             else
               logger.warn "Would have increased capacity of #{instance.autoscale_group} but already at maximum."
@@ -84,7 +85,8 @@ module Dogscaler
             end
           when 'shrink'
             if instance.capacity > instance.min_instances
-              aws.set_capacity(instance, instance.shrink_by, options)
+              change = instance.capacity - instance.shrink_by
+              aws.set_capacity(instance, change.to_i, options)
             else
               logger.warn "Would have reduced capacity of #{instance.autoscale_group} but already at minimum."
               logger.warn "Current desired: #{instance.capacity}"
