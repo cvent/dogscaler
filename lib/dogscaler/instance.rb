@@ -1,7 +1,7 @@
 module Dogscaler
   class Instance
-  	NoPointsSetError  = Class.new(StandardError)
-  	NoResultsSetError  = Class.new(StandardError)
+    NoPointsSetError  = Class.new(StandardError)
+    NoResultsSetError  = Class.new(StandardError)
 
     include Virtus.model
     include Logging
@@ -22,9 +22,9 @@ module Dogscaler
 
     def reduce!
       raise NoPointsSetError, 'No points are set on this object' if points.empty?
-	    logger.debug "Apply transform #{transform}"
+      logger.debug "Apply transform #{transform}"
       case transform
-      	when 'avg'
+        when 'avg'
           self.result = points.inject(0.0) { |sum,el| sum + el } / points.size
         when 'max'
           self.result = points.max
@@ -47,18 +47,18 @@ module Dogscaler
     def status
       raise NoResultSetError, 'No results set on this object' if not result
       if result > scale_up_threshhold
-      	logger.info "Value: #{result} Threshold: #{scale_up_threshhold}."
-    		logger.info "Would scale up by #{grow_by} instances."
-    		'grow'
-  	  elsif result < scale_down_threshhold
-  	  	logger.info "Value: #{result} Threshold: #{scale_down_threshhold}."
-    		logger.info "Would scale down by #{shrink_by} instances."
-    		'shrink'
-  	  else
-  	  	logger.info "Value: #{result} Max Threshold: #{scale_up_threshhold}."
-  	  	logger.info "Value: #{result} Min Threshold: #{scale_down_threshhold}."
-  	  	'okay'
-  	  end
+        logger.debug "Value: #{result} Threshold: #{scale_up_threshhold}."
+        logger.debug "Would scale up by #{grow_by} instances."
+        'grow'
+      elsif result < scale_down_threshhold
+        logger.debug "Value: #{result} Threshold: #{scale_down_threshhold}."
+        logger.debug "Would scale down by #{shrink_by} instances."
+        'shrink'
+      else
+        logger.debug "Value: #{result} Max Threshold: #{scale_up_threshhold}."
+        logger.debug "Value: #{result} Min Threshold: #{scale_down_threshhold}."
+        'okay'
+      end
     end
 
   end

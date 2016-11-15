@@ -88,10 +88,10 @@ module Dogscaler
       logger.warn "From current capacity: #{instance.capacity} to: #{desired_capacity}"
       if options[:dryrun]
         logger.info "Not updating due to dry run mode"
-      	logger.debug template
+        logger.debug template
       else
-	      asg_client.update_auto_scaling_group(template)
-	    end
+        asg_client.update_auto_scaling_group(template)
+      end
     end
   end
 end
