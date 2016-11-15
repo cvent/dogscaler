@@ -73,24 +73,24 @@ module Dogscaler
           when 'grow'
             if instance.capacity < instance.max_instances
               if instance.max_instances == 0
-                logger.warn "Would have increased capacity of #{instance.autoscale_group} but current value is 0"
+                logger.info "Would have increased capacity of #{instance.autoscale_group} but current value is 0"
               else
                 change = instance.capacity + instance.grow_by
                 aws.set_capacity(instance, change.to_i, options)
               end
             else
-              logger.warn "Would have increased capacity of #{instance.autoscale_group} but already at maximum."
-              logger.warn "Current desired: #{instance.capacity}"
-              logger.warn "Current max: #{instance.max_instances}"
+              logger.info "Would have increased capacity of #{instance.autoscale_group} but already at maximum."
+              logger.info "Current desired: #{instance.capacity}"
+              logger.info "Current max: #{instance.max_instances}"
             end
           when 'shrink'
             if instance.capacity > instance.min_instances
               change = instance.capacity - instance.shrink_by
               aws.set_capacity(instance, change.to_i, options)
             else
-              logger.warn "Would have reduced capacity of #{instance.autoscale_group} but already at minimum."
-              logger.warn "Current desired: #{instance.capacity}"
-              logger.warn "Current min: #{instance.min_instances}"
+              logger.info "Would have reduced capacity of #{instance.autoscale_group} but already at minimum."
+              logger.info "Current desired: #{instance.capacity}"
+              logger.info "Current min: #{instance.min_instances}"
             end
           when 'okay'
             logger.info "Capacity within expected parameters, no changes."
