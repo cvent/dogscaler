@@ -8,6 +8,7 @@ module Dogscaler
     def initialize
       @credentials = Aws::SharedCredentials.new(profile_name: Settings.aws['profile'])
       @region = Settings.aws['region']
+      @slack = Dogscaler::SlackClient.new
     end
 
     def asg_client
@@ -84,12 +85,14 @@ module Dogscaler
         auto_scaling_group_name: instance.autoscale_group,
         desired_capacity: desired_capacity,
       }
-      logger.warn "Updating autoscale group #{instance.autoscale_group}"
-      logger.warn "From current capacity: #{instance.capacity} to: #{desired_capacity}"
+      message = """Updating autoscale group #{instance.autoscale_group}\n
+From current capacity: #{instance.capacity} to: #{desired_capacity}"""
+      logger.warn message
       if options[:dryrun]
         logger.info "Not updating due to dry run mode"
         logger.debug template
       else
+        @slack.send_message(message)
         asg_client.update_auto_scaling_group(template)
       end
     end
