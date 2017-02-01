@@ -10,6 +10,7 @@ require_relative '../lib/settings'
 require_relative '../lib/dogscaler/config'
 require_relative '../lib/dogscaler/instance'
 require_relative '../lib/dogscaler/datadog'
+require_relative '../lib/dogscaler/slack'
 require_relative '../lib/dogscaler/awsclient'
 require_relative '../lib/dogscaler/cli'
 
