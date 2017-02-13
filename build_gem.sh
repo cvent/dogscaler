@@ -39,7 +39,7 @@ bundle exec rake test --trace
 gem build $GEM_SPEC
 
 # Find target gem. Prune search to exclude vendor
-TARGET_GEM=$(find $WB_ROOT/$PROJECT_DIR -type f -not -path "*vendor/*" -name *.gem)
+TARGET_GEM=$(find . -type f -not -path "*vendor/*" -name *.gem)
 
 echo "Uploading gem $TARGET_GEM to gem server"
 # Deploy (updating the Gem server index is left to another job)
