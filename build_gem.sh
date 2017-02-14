@@ -2,27 +2,7 @@
 
 GEM_BUCKET="gemserver.crwd.cc"    
 ## Exit 1 if any command fails
-#set -e
-#
-#if [ "$#" -ne 1 ]; then
-#    echo "PROJECT_DIR not specified"
-#    echo "Usage : `basename $0` <PROJECT_DIR>"
-#    exit 1
-#fi
-#
-#PROJECT_DIR=$1
-#GEMS_ROOT=<root directory of gems repo>
-#
-#echo "Building gems in PROJECT_DIR $PROJECT_DIR"
-#
-## Check that PROJECT_DIR is in the path relative to GEMS_ROOT
-#if ! [ -d "$GEMS_ROOT/$PROJECT_DIR" ]; then
-#  echo "Error: PROJECT_DIR does not exist"
-#  exit 1
-#fi
-
-## Go to Gem project
-#cd $GEMS_ROOT/$PROJECT_DIR
+set -e
 
 # Create a build number
 # year.month.day.hour.minute.second.sha1
