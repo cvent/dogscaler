@@ -30,7 +30,7 @@ export GEM_BUILD=$(echo -n $(date +%Y.%m.%d.%H.%M.%S).;echo $(git rev-parse --sh
 echo "GEM_BUILD $GEM_BUILD"
 
 # Find the gemspec to build
-GEM_SPEC=$(find $GEMS_ROOT/$PROJECT_DIR -type f -name *.gemspec)
+GEM_SPEC=$(find . -type f -name *.gemspec)
 echo "Building gem from gemspec $GEM_SPEC"
 
 # Bundle, run tests, and build gem
