@@ -19,7 +19,6 @@ module Dogscaler
       :type  => :string, :banner => "Path to configuration file"
 
 
-    #logger.level = options[:debug] ? Logger::DEBUG : Logger::INFO
     desc "debug", "testing command, describes the query it ran and the results"
     def debug
       Settings.load!(File.expand_path(options[:config])) if options[:config]
@@ -41,7 +40,7 @@ module Dogscaler
     desc "apply", "Scale the environment based on a query"
     def apply
       Settings.load!(File.expand_path(options[:config])) if options[:config]
-      aws = Dogscaler::AwsClient.new
+
       if options[:debug]
         self.class.logger.level = Logger::DEBUG
       elsif options[:terse]
@@ -52,50 +51,16 @@ module Dogscaler
         self.class.logger.level = Logger::WARN
       end
 
-
-      Settings.instances.each do |i|
+      instances = []
+      Settings.instances.each do |k,v|
         instance = Dogscaler::Instance.new
-        instance.attributes = i.symbolize_keys
-        dd_client = Dogscaler::Datadog.new(Settings.datadog)
-        dd_client.process(instance)
-        asgs = aws.get_asg(instance.autoscale_group, instance.asg_tag_filters)
-        asgs.each do |asg|
-          instance.capacity = asg.desired_capacity
-          instance.min_instances = asg.min_size
-          instance.max_instances = asg.max_size
-          instance.autoscale_group = asg.auto_scaling_group_name
-          logger.debug "Instance: #{instance.autoscale_group}"
-          logger.debug "min_instances: #{instance.min_instances}"
-          logger.debug "max_instances: #{instance.max_instances}"
-          logger.debug "desired_capacity: #{instance.capacity}"
-          logger.debug "instance status: #{instance.status}"
-          case instance.status
-          when 'grow'
-            if instance.capacity < instance.max_instances
-              if instance.max_instances == 0
-                logger.info "Would have increased capacity of #{instance.autoscale_group} but current value is 0"
-              else
-                change = instance.capacity + instance.grow_by
-                aws.set_capacity(instance, change.to_i, options)
-              end
-            else
-              logger.info "Would have increased capacity of #{instance.autoscale_group} but already at maximum."
-              logger.info "Current desired: #{instance.capacity}"
-              logger.info "Current max: #{instance.max_instances}"
-            end
-          when 'shrink'
-            if instance.capacity > instance.min_instances
-              change = instance.capacity - instance.shrink_by
-              aws.set_capacity(instance, change.to_i, options)
-            else
-              logger.info "Would have reduced capacity of #{instance.autoscale_group} but already at minimum."
-              logger.info "Current desired: #{instance.capacity}"
-              logger.info "Current min: #{instance.min_instances}"
-            end
-          when 'okay'
-            logger.info "Capacity within expected parameters, no changes."
-          end
-        end
+        instance.attributes = v.symbolize_keys
+        instance.process_checks
+        instances << instance
+      end
+
+      instances.each do |instance|
+        instance.update_capacity(options)
       end
     end
   end

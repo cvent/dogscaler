@@ -1,65 +1,89 @@
+
 module Dogscaler
   class Instance
-    NoPointsSetError  = Class.new(StandardError)
-    NoResultsSetError  = Class.new(StandardError)
-
     include Virtus.model
     include Logging
     attribute :name, String
-    attribute :query, String
-    attribute :scale_up_threshhold, Integer
-    attribute :scale_down_threshhold, Integer
-    attribute :max_instances, Integer
-    attribute :min_instances, Integer
+    attribute :queries, Array, :default => []
+    attribute :parsed_queries, Array
     attribute :grow_by, Integer, :default => 1
     attribute :shrink_by, Integer, :default => 1
-    attribute :autoscale_group, String
-    attribute :transform, String, :default => 'avg'
-    attribute :points, Array, :default => []
-    attribute :result, Float
-    attribute :capacity, Integer
     attribute :asg_tag_filters, Hash
+    attribute :autoscale_group, String
+    attribute :capacity, Integer
 
-    def reduce!
-      raise NoPointsSetError, 'No points are set on this object' if points.empty?
-      logger.debug "Apply transform #{transform}"
-      case transform
-        when 'avg'
-          self.result = points.inject(0.0) { |sum,el| sum + el } / points.size
-        when 'max'
-          self.result = points.max
-        when 'min'
-          self.result = points.min
-        when 'last'
-          self.result = points[-1]
-        when 'sum'
-          self.result = points.reduce(0, :+)
-        when 'count'
-          self.result = points.count
-        else
-          logger.error 'Invalid transform: #{transform}'
-          exit 1
-      end
-      logger.debug "Transformed value #{result}"
-      result
+    def initialize
+      @checks = []
     end
 
-    def status
-      raise NoResultSetError, 'No results set on this object' if not result
-      if result > scale_up_threshhold
-        logger.debug "Value: #{result} Threshold: #{scale_up_threshhold}."
-        logger.debug "Would scale up by #{grow_by} instances."
-        'grow'
-      elsif result < scale_down_threshhold
-        logger.debug "Value: #{result} Threshold: #{scale_down_threshhold}."
-        logger.debug "Would scale down by #{shrink_by} instances."
-        'shrink'
+    def asg
+      @asg ||= aws.get_asg(self.autoscale_group, self.asg_tag_filters)
+    end
+
+    def aws
+      @aws ||= Dogscaler::AwsClient.new
+    end
+
+    def checks
+      @checks
+    end
+
+    def max_instances
+      asg.max_size
+    end
+
+    def min_instances
+      asg.min_size
+    end
+
+    def autoscalegroupname
+      asg.auto_scaling_group_name
+    end
+
+    def capacity
+      asg.desired_capacity
+    end
+
+    def process_checks
+      dd_client = Dogscaler::Datadog.new(Settings.datadog)
+      self.queries.each do |i|
+        check = Dogscaler::Check.new()
+        check.attributes = i.symbolize_keys
+        check.points = dd_client.process(i['query'])
+        check.reduce!
+        @checks << check
+      end
+    end
+
+    def grow?
+      self.checks.any? {|c| c.status > 0 }
+    end
+
+    def shrink?
+      self.checks.any? {|c| c.status < 0 }
+    end
+
+    def shrink
+      capacity + -shrink_by.to_i.abs
+    end
+
+    def grow
+      capacity + grow_by.to_i.abs
+    end
+
+    def update_capacity(options)
+      aws.set_capacity(self, options)
+    end
+
+    def change
+      if self.grow?
+        change = self.grow
+      elsif self.shrink?
+        change = self.shrink
       else
-        logger.debug "Value: #{result} Max Threshold: #{scale_up_threshhold}."
-        logger.debug "Value: #{result} Min Threshold: #{scale_down_threshhold}."
-        'okay'
+        change = capacity
       end
+      change
     end
-
   end
 end

@@ -3,6 +3,8 @@ require 'aws-sdk'
 module Dogscaler
   class AwsClient
     NoResultsError = Class.new(StandardError)
+    TooManyResultsError = Class.new(StandardError)
+    NoAutoscaleNameFound = Class.new(StandardError)
     include Logging
 
     def initialize
@@ -19,18 +21,11 @@ module Dogscaler
       @ec2_client ||= Aws::EC2::Client.new(credentials: @credentials, :region => @region)
     end
 
-    def get_asg(asg_name=nil, asg_tag_filters = {})
-      #asg_client.describe_auto_scaling_groups({auto_scaling_group_names: \
-      #[asg_name] }).auto_scaling_groups.first
+    def get_autoscale_groups
       next_token = nil
       autoscalegroups = []
-      if asg_name.nil? and asg_tag_filters.empty?
-        logger.error "Need a name or a filter set"
-        exit 1
-      end
       loop do
         body = {next_token: next_token}
-        body['auto_scaling_group_names'] = [asg_name] if asg_name
         resp = asg_client.describe_auto_scaling_groups(body)
         asgs =  resp.auto_scaling_groups
         asgs.each do |instance|
@@ -39,18 +34,34 @@ module Dogscaler
         next_token = resp.next_token
         break if next_token.nil?
       end
+      return autoscalegroups
+    end
+
+    def autoscalegroups
+      @@asgs ||= get_autoscale_groups
+    end
+
+    def get_asg(asg_name=nil, asg_tag_filters = {})
+      raise NoAutoscaleNameFound if asg_name.nil? and asg_tag_filters.empty?
+
       if not asg_tag_filters.empty?
-        res = []
-        autoscalegroups.each do |group|
-          if validate_tags(group.tags, asg_tag_filters)
-            res << group
-          end
+        asg_name = autoscalegroups.select do |group|
+          validate_tags(group.tags, asg_tag_filters)
         end
-        raise NoResultsError if res.count == 0
-        return res
       else
-        return autoscalegroups
+        asg_name = autoscalegroups.select do |group|
+          group.auto_scaling_group_name == asg_name
+        end
       end
+
+      asg_name.select! do |group|
+        group.desired_capacity > 0 and
+        group.max_size > 0
+      end
+
+      raise TooManyResultsError if asg_name.count > 1
+      raise NoResultsError if asg_name.empty?
+      return asg_name.first
     end
 
     def validate_tags(tags, filters)
@@ -59,14 +70,9 @@ module Dogscaler
         trueness = false
         logger.debug "Checking: #{key} for: #{value}"
         tags.each do |tag|
-          if tag['key'] == key
-            logger.debug "Key: #{key} matches"
-            logger.debug "Comparing: #{tag['value']} to: #{value}"
-            if tag['value'] == value
-              logger.debug "Value Matches"
-              trueness = true
-              break
-            end
+          if tag['key'] == key && tag['value'] == value
+            trueness = true
+            break
           end
         end
         values << trueness
@@ -80,14 +86,30 @@ module Dogscaler
         [asg_name] }).auto_scaling_groups.first.desired_capacity
     end
 
-    def set_capacity(instance, desired_capacity, options)
+    def set_capacity(instance, options)
+      if instance.change == instance.capacity
+        logger.debug "Nothing to change."
+        return
+      end
+
       template = {
         auto_scaling_group_name: instance.autoscale_group,
-        desired_capacity: desired_capacity,
+        desired_capacity: instance.change
       }
-      message = """Updating autoscale group #{instance.autoscale_group}\n
-From current capacity: #{instance.capacity} to: #{desired_capacity}"""
-      logger.warn message
+
+      # Quick fail if our capacity is above or below the guide rails
+      if instance.change > instance.max_instances
+        message = "Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} greater than the maximum instance count of #{instance.max_instances}"
+        logger.info(message)
+        return
+      elsif instance.change > instance.min_instances
+        message = "Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} less than than the minimum instance count of #{instance.min_instances}"
+        logger.info(message)
+        return
+      end
+
+      message = "Scaling #{instance.autoscalegroupname} from #{instance.capacity} to #{instance.change}"
+      logger.info(message)
       if options[:dryrun]
         logger.info "Not updating due to dry run mode"
         logger.debug template
