@@ -1,3 +1,5 @@
 module Dogscaler
-  VERSION = "2.0.0"
+  class Rules
+
+  end
 end

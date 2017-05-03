@@ -5,7 +5,6 @@ module Dogscaler
   class SlackClient
     include Logging
     def initialize
-
       Slack.configure do |config|
         config.token = Settings.slack['api_token']
       end
