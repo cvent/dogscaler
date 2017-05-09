@@ -1,6 +1,5 @@
 require 'slack-ruby-client'
 
-
 module Dogscaler
   class SlackClient
     include Logging
