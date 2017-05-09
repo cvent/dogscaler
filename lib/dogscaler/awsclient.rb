@@ -100,7 +100,7 @@ module Dogscaler
       end
 
       template = {
-        auto_scaling_group_name: instance.autoscale_group,
+        auto_scaling_group_name: instance.autoscalegroupname,
         desired_capacity: instance.change
       }
 
