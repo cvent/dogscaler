@@ -94,7 +94,7 @@ module Dogscaler
       if instance.change > instance.max_instances
         logger.info("Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} greater than the maximum instance count of #{instance.max_instances}")
         return
-      elsif instance.change > instance.min_instances
+      elsif instance.change < instance.min_instances
         logger.info("Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} less than than the minimum instance count of #{instance.min_instances}")
         return
       end
