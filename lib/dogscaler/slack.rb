@@ -3,12 +3,12 @@ require 'slack-ruby-client'
 module Dogscaler
   class SlackClient
     include Logging
-    def initialize
+    def initialize(api_token, channel)
       Slack.configure do |config|
-        config.token = Settings.slack['api_token']
+        config.token = api_token
       end
       @client = Slack::Web::Client.new
-      @channel = Settings.slack['channel']
+      @channel = channel
     end
 
     def send_message(message)

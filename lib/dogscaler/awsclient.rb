@@ -10,7 +10,6 @@ module Dogscaler
     def initialize
       @credentials = Aws::SharedCredentials.new(profile_name: Settings.aws['profile'])
       @region = Settings.aws['region']
-      @slack = Dogscaler::SlackClient.new
     end
 
     def asg_client
@@ -105,14 +104,8 @@ module Dogscaler
         logger.info("Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} less than than the minimum instance count of #{instance.min_instances}")
         return
       end
-      message = "Scaling #{instance.autoscalegroupname} from #{instance.capacity} to #{instance.change}"
-      logger.info(message)
-      if options[:dryrun]
-        logger.info "Not updating due to dry run mode"
-        logger.debug template
-      else
-        @slack.send_message(message)
-        asg_client.update_auto_scaling_group(template)
+      logger.debug template
+      asg_client.update_auto_scaling_group(template)
       end
     end
   end
