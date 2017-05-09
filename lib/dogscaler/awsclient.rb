@@ -90,12 +90,6 @@ module Dogscaler
         logger.debug "Nothing to change."
         return
       end
-
-      template = {
-        auto_scaling_group_name: instance.autoscale_group,
-        desired_capacity: instance.change
-      }
-
       # Quick fail if our capacity is above or below the guide rails
       if instance.change > instance.max_instances
         logger.info("Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} greater than the maximum instance count of #{instance.max_instances}")
@@ -104,9 +98,14 @@ module Dogscaler
         logger.info("Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} less than than the minimum instance count of #{instance.min_instances}")
         return
       end
+
+      template = {
+        auto_scaling_group_name: instance.autoscale_group,
+        desired_capacity: instance.change
+      }
+
       logger.debug template
       asg_client.update_auto_scaling_group(template)
-      end
     end
   end
 end
