@@ -26,8 +26,6 @@ module Dogscaler
         instance = Dogscaler::Instance.new
         instance.attributes = i.symbolize_keys
         dd_client = Dogscaler::Datadog.new(Settings.datadog)
-        require 'pp'
-        pp instance.query
         dd_client.process(instance)
       end
     end
@@ -58,10 +56,14 @@ module Dogscaler
         instance.process_checks
         instances << instance
       end
-
+      state = Dogscaler::State.new
       instances.each do |instance|
+        next if instance.change == instance.capacity
+        next if Time.now - state.get(instance.autoscalegroupname) < instance.cooldown
+        state.update(instance.autoscalegroupname)
         instance.update_capacity(options)
       end
+      state.save!
     end
   end
 end

@@ -4,6 +4,7 @@ module Dogscaler
     include Virtus.model
     include Logging
     attribute :name, String
+    attribute :cooldown_period, Integer
     attribute :queries, Array, :default => []
     attribute :parsed_queries, Array
     attribute :grow_by, Integer, :default => 1
@@ -15,7 +16,9 @@ module Dogscaler
     def initialize
       @checks = []
     end
-
+    def cooldown
+      self.cooldown_period || 60
+    end
     def asg
       @asg ||= aws.get_asg(self.autoscale_group, self.asg_tag_filters)
     end

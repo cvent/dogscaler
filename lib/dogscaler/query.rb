@@ -15,11 +15,9 @@ module Dogscaler
       raise NoResultSetError, 'No results set on this object' if not result
       if self.result > scale_up_threshhold
         logger.debug "Value: #{result} Threshold: #{scale_up_threshhold}."
-        logger.debug "Would scale up by #{grow_by} instances."
         1
       elsif self.result < scale_down_threshhold
         logger.debug "Value: #{result} Threshold: #{scale_down_threshhold}."
-        logger.debug "Would scale down by #{shrink_by} instances."
         -1
       else
         logger.debug "Value: #{result} Max Threshold: #{scale_up_threshhold}."

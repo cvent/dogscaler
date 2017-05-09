@@ -99,17 +99,14 @@ module Dogscaler
 
       # Quick fail if our capacity is above or below the guide rails
       if instance.change > instance.max_instances
-        message = "Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} greater than the maximum instance count of #{instance.max_instances}"
-        logger.info(message)
+        logger.info("Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} greater than the maximum instance count of #{instance.max_instances}")
         return
       elsif instance.change > instance.min_instances
-        message = "Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} less than than the minimum instance count of #{instance.min_instances}"
-        logger.info(message)
+        logger.info("Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} less than than the minimum instance count of #{instance.min_instances}")
         return
       end
 
-      message = "Scaling #{instance.autoscalegroupname} from #{instance.capacity} to #{instance.change}"
-      logger.info(message)
+      logger.info("Scaling #{instance.autoscalegroupname} from #{instance.capacity} to #{instance.change}")
       if options[:dryrun]
         logger.info "Not updating due to dry run mode"
         logger.debug template

@@ -25,6 +25,7 @@ instances:
         transform: avg             # What transform to use on the query, eg (min,max,last,avg,count)
     shrink_by: 1                   # How many instances to add to the autoscale group
     grow_by: 1                     # how many instances to remove from the autoscale group
+    cooldown: 60                   # Cooldown time between autoscale events should trigger.
     asg_tag_filters:               # key value tags of filter and find our autoscale group.
       Type: core
       Environment: production
