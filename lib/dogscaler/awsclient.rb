@@ -105,8 +105,8 @@ module Dogscaler
         logger.info("Autoscale group #{instance.autoscalegroupname} desired capacity: #{instance.change} less than than the minimum instance count of #{instance.min_instances}")
         return
       end
-
-      logger.info("Scaling #{instance.autoscalegroupname} from #{instance.capacity} to #{instance.change}")
+      message = "Scaling #{instance.autoscalegroupname} from #{instance.capacity} to #{instance.change}"
+      logger.info(message)
       if options[:dryrun]
         logger.info "Not updating due to dry run mode"
         logger.debug template
