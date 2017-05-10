@@ -59,7 +59,10 @@ module Dogscaler
       end
 
       raise TooManyResultsError if asg_name.count > 1
-      raise NoResultsError if asg_name.empty?
+      if asg_name.empty?
+        logger.error "No results found for asg_name #{asg_name}, filters: #{asg_tag_filters}"
+        raise NoResultsError
+      end
       return asg_name.first
     end
 
