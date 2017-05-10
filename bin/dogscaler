@@ -4,11 +4,15 @@ require 'rubygems'
 require 'yaml'
 require 'thor'
 require 'virtus'
+# Fix for slack client gem
+require "active_support/core_ext/module/remove_method"
 
 require_relative '../lib/logging'
 require_relative '../lib/settings'
 require_relative '../lib/dogscaler/config'
+require_relative '../lib/dogscaler/query'
 require_relative '../lib/dogscaler/instance'
+require_relative '../lib/dogscaler/state'
 require_relative '../lib/dogscaler/datadog'
 require_relative '../lib/dogscaler/slack'
 require_relative '../lib/dogscaler/awsclient'

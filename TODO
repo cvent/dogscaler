@@ -1,0 +1,6 @@
+What happens if we have multiple queries we want to scale the same autogroup based on?
+eg. number of emails in a queue (or) load on a system.
+
+Can we look up the last scale event for a group and use that to determine a cooldown between scaling events.
+
+

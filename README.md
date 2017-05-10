@@ -38,29 +38,42 @@ Create a dogscaler.yaml file with contents like:
   aws:
     region: 'us-west-2'
     profile: 'main'  # This expects a .aws/credentials file with a section matching this name
-  instances:
-    -
-      name: 'web cpu usage in prod'                         # name/description for what this scaling instance event is called.
-      query: "avg:system.cpu.user{env:production,type:web}" # Datadog metric to query
-      autoscale_group: "web"        # Static name of autoscale group to scale  
-      scale_up_threshhold: 75       # Theshold to scale if the data returned is greater
-      scale_down_threshhold: 20     # Threshold to scale down if the data is less 
-      grow_by: 2                    # How many instances to increase
-      shrink_by: 1                  # how many instances to decrease
-      transform: avg                # transform on the datapoints returned from the datadog event.
-  
-    -
-      name: 'nginx waiting in prod'
-      query: "max:nginx.net.waiting{env:production}"
-      asg_tag_filters:              # instead of using a static autoscale group name, you can use tags and filter by them instead
-        Type: web                   # This is a key/value pair of aws tags on the autoscale group
-        Environment: production     # Multiple tags are concatenated together to filter/reduce instances
-      scale_up_threshhold: 10
-      scale_down_threshhold: 5
-      grow_by: 2
-      shrink_by: 1
-      transform: avg
+  slack:
+    channel: '#production'
+    api_token: 'token_here'
 
+instances:
+  'mailer_prod':
+    queries:
+      - name: unsent_invites
+        query: max:mail.db.v3.unsent_invitations{*}
+        scale_up_threshhold: 1500
+        scale_down_threshhold: 20
+        transform: avg
+      - name: mailer load
+        query: avg:system.cpu.user{env:production,type:mailer}
+        scale_up_threshhold: 75
+        scale_down_threshhold: 20
+        transform: avg
+    asg_tag_filters:
+      Type: mailer
+      Environment: production
+    grow_by: 1
+    shrink_by: 1
+    cooldown_period: 240
+  'web_prod':
+    queries:
+      - name: web load
+        query: avg:system.cpu.user{env:production,type:web}
+        scale_up_threshhold: 75
+        scale_down_threshhold: 20
+        transform: avg
+    asg_tag_filters:
+      Type: web
+      Environment: production
+    grow_by: 2
+    shrink_by: 1
+    cooldown_period: 240
 ```
 
 ## Usage

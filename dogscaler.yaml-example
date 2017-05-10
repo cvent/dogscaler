@@ -4,27 +4,39 @@ datadog:
 aws:
   region: 'us-west-2'
   profile: 'main'
+slack:
+  channel: '#production'
+  api_token: 'token_here'
 instances:
-  -
-    name: 'nginx wait in dev'
-    query: "max:nginx.net.waiting{env:dev}"
-    autoscale_group: "development"
-    scale_up_threshhold: 75
-    scale_down_threshhold: 20
-    grow_by: 2
+  'mailer_prod':
+    queries:
+      - name: unsent_invites
+        query: max:mail.db.v3.unsent_invitations{*}
+        scale_up_threshhold: 1500
+        scale_down_threshhold: 20
+        transform: avg
+      - name: mailer load
+        query: avg:system.cpu.user{env:production,type:mailer}
+        scale_up_threshhold: 75
+        scale_down_threshhold: 20
+        transform: avg
+    asg_tag_filters:
+      Type: mailer
+      Environment: production
+    grow_by: 1
     shrink_by: 1
-    transform: avg
-  -
-    name: 'nginx wait in prod'
-    query: "max:nginx.net.waiting{env:production}"
+    cooldown_period: 240
+  'web_prod':
+    queries:
+      - name: web load
+        query: avg:system.cpu.user{env:production,type:web}
+        scale_up_threshhold: 75
+        scale_down_threshhold: 20
+        transform: avg
     asg_tag_filters:
       Type: web
       Environment: production
-    scale_up_threshhold: 10
-    scale_down_threshhold: 5
     grow_by: 2
     shrink_by: 1
-    transform: min
-
-
+    cooldown_period: 240
 
