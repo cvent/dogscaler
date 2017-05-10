@@ -57,15 +57,20 @@ module Dogscaler
         instances << instance
       end
       state = Dogscaler::State.new
-      slack = Dogscaler::SlackClient.new(Settings.slack['api_token'], Settings.slack['channel'])
+      begin
+        slack = Dogscaler::SlackClient.new(Settings.slack['api_token'], Settings.slack['channel'])
+      rescue NoMethodError
+        # Slack not configured
+        slack = false
+      end
       instances.each do |instance|
-        if instance.preflight_checks
+        if instance.preflight_checks(state)
           message = "Scaling #{instance.autoscalegroupname} from #{instance.capacity} to #{instance.change}"
           logger.info(message)
           if options[:dryrun]
             logger.info "Not updating due to dry run mode"
           else
-            slack.send_message(message)
+            slack.send_message(message) if slack
             state.update(instance.autoscalegroupname)
             instance.update_capacity(options)
           end

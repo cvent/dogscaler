@@ -43,32 +43,31 @@ module Dogscaler
       asg.auto_scaling_group_name
     end
 
-    def preflight_checks
-        # Quick fail filters
-        # Don't do anything if we're already at the capactiy we think we should be
-        if self.change == self.capacity
-          logger.debug "Instance count: #{self.change} matches capacity: #{self.capacity}"
-          return false
-        end
-        # Don't do anything if we have scaled recently
-        if Time.now - state.get(self.autoscalegroupname) < self.cooldown
-          logger.debug "We've scaled too soon, cooling down"
-          return false
-        end
-        # Don't do anything if the new value is lower than the minimium
-        if self.change < self.min_instances
-          logger.debug "New size: #{self.change} smaller than min count: #{self.min_instances}"
-          return false
-        end
-        # Don't do anything if the new value is higher than the maximum
-        if self.change > self.max_instances
-          logger.debug "New size: #{self.change} larger than max count: #{self.max_instances}"
-          return false
-        end
-        true
+    def preflight_checks(state)
+      # Quick fail filters
+      # Don't do anything if we're already at the capactiy we think we should be
+      if self.change == self.capacity
+        logger.debug "Instance count: #{self.change} matches capacity: #{self.capacity}"
+        return false
+      end
+      # Don't do anything if we have scaled recently
+      if Time.now - state.get(self.autoscalegroupname) < self.cooldown
+        logger.debug "We've scaled too soon, cooling down"
+        return false
+      end
+      # Don't do anything if the new value is lower than the minimium
+      if self.change < self.min_instances
+        logger.debug "New size: #{self.change} smaller than min count: #{self.min_instances}"
+        return false
+      end
+      # Don't do anything if the new value is higher than the maximum
+      if self.change > self.max_instances
+        logger.debug "New size: #{self.change} larger than max count: #{self.max_instances}"
+        return false
+      end
+      true
     end
 
-    end
     def capacity
       asg.desired_capacity
     end
