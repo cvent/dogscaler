@@ -12,7 +12,7 @@ module Dogscaler
       res = @dog.get_points(query, from.strftime('%s'), to.strftime('%s'))
       if res[0] != '200'
         logger.error "Error code generated on query, please validate your api keys, and query"
-        logger.error "query: #{instance.query}"
+        logger.error "query: #{query}"
         logger.error "Result: #{res}"
         exit 1
       end
