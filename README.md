@@ -127,5 +127,5 @@ INFO -- : Current min: 3
 
 And then in slack you'll see:
 
-![Slack Example](/datadog_example.jpg?raw=true "Slack output)
+[Slack Example](docs/images/datadog_example.jpg?raw=true "Slack output)
 
