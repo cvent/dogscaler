@@ -105,4 +105,7 @@ INFO -- : Current desired: 3
 INFO -- : Current min: 3
 ```
 
+And then in slack you'll see:
+
+![Slack Example](/datadog_example.jpg?raw=true "Slack output)
 
