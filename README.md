@@ -32,15 +32,15 @@ Create a dogscaler.yaml file with contents like:
 
 ```
 
-  datadog:
-    api_key: <KEYHERE>
-    application_key: <KEYHERE>
-  aws:
-    region: 'us-west-2'
-    profile: 'main'  # This expects a .aws/credentials file with a section matching this name
-  slack:
-    channel: '#production'
-    api_token: 'token_here'
+datadog:
+  api_key: <KEYHERE>
+  application_key: <KEYHERE>
+aws:
+  region: 'us-west-2'
+  profile: 'main'  # This expects a .aws/credentials file with a section matching this name
+slack:
+  channel: '#production'
+  api_token: 'token_here'
 
 instances:
   'mailer_prod':
