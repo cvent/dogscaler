@@ -105,4 +105,7 @@ INFO -- : Current desired: 3
 INFO -- : Current min: 3
 ```
 
+And then in slack you'll see:
+
+<img src="docs/images/datadog_example.jpg?raw=true" width="77%"/>
 
