@@ -81,16 +81,36 @@ instances:
 
 Below are some simple examples
 
+Help output:
+
+```bash
+dogscaler help
+Commands:
+  dogscaler apply           # Scale the environment based on a query
+  dogscaler config          # Generate a default configuration
+  dogscaler debug           # testing command, describes the query it ran and the results
+  dogscaler help [COMMAND]  # Describe available commands or one specific command
+
+Options:
+  d, [--debug=Enable debug mode], [--no-debug]
+  r, [--region=AWS Region]
+                                                 # Default: us-west-2
+  v, [--verbose=Verbose Output], [--no-verbose]
+  t, [--terse=Terse Output], [--no-terse]
+      [--dryrun=Do a dry run], [--no-dryrun]
+      [--config=Path to configuration file]
+```
+
 The basic example - Apply the configuration.
 
 ```
-  $ dogscaler apply -c dogscaler.yaml
+  $ dogscaler apply --config dogscaler.yaml
 ```
 
 Test the configuration without making changes, with verbose output:
 
 ```bash
-$ dogscaler apply --dryrun -v -c dogscaler.yaml
+$ dogscaler apply --dryrun -v --config dogscaler.yaml
 INFO -- : Value: 147.01052631578946 Threshold: 75.
 INFO -- : Would scale up by 2 instances.
 INFO -- : Value: 147.01052631578946 Threshold: 75.
