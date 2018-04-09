@@ -19,6 +19,7 @@ module Dogscaler
     def cooldown
       self.cooldown_period || 60
     end
+
     def asg
       @asg ||= aws.get_asg(self.autoscale_group, self.asg_tag_filters)
     end
@@ -63,7 +64,14 @@ module Dogscaler
       # Don't do anything if the new value is higher than the maximum
       if self.change > self.max_instances
         logger.debug "New size: #{self.change} larger than max count: #{self.max_instances}"
-        return false
+        if self.change == self.max_instances
+          logger.debug "Already at max, doing nothing"
+          return false
+        else
+          logger.debug "Updating to the max: #{self.max_instances}"
+          self.change = self.max_instances
+          return true
+        end
       end
       true
     end
@@ -103,7 +111,11 @@ module Dogscaler
       aws.set_capacity(self, options)
     end
 
-    def change
+    def change=(value)
+      @change = value
+    end
+
+    def process_change
       if self.grow?
         change = self.grow
       elsif self.shrink?
@@ -113,5 +125,10 @@ module Dogscaler
       end
       change
     end
+
+    def change
+      @change || process_change
+    end
+
   end
 end
