@@ -64,7 +64,7 @@ module Dogscaler
       # Don't do anything if the new value is higher than the maximum
       if self.change > self.max_instances
         logger.debug "New size: #{self.change} larger than max count: #{self.max_instances}"
-        if self.change == self.max_instances
+        if self.capacity == self.max_instances
           logger.debug "Already at max, doing nothing"
           return false
         else
