@@ -1,0 +1,5 @@
+Bugfix: If we attempt to scale before MAX, we scale to max instead of
+stopping
+Bugfix: fix state file handling, our config was always defaulting to {}.
+Bugfix: better error handling when theres no autoscale group
+
