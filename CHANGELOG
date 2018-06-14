@@ -1,5 +1,8 @@
-Bugfix: If we attempt to scale before MAX, we scale to max instead of
-stopping
-Bugfix: fix state file handling, our config was always defaulting to {}.
-Bugfix: better error handling when theres no autoscale group
+# Version 2.0.10
+    Bugfix: If we attempt to scale before MAX, we scale to max instead of
+    stopping
+    Bugfix: fix state file handling, our config was always defaulting to {}.
+    Bugfix: better error handling when theres no autoscale group
 
+# Version 2.0.11
+    Bugfix: Loading the state before setting the path for the state file.

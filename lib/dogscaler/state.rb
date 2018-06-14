@@ -2,8 +2,8 @@ module Dogscaler
   class State
     include Logging
   	def initialize
-  	  @state = self.load
       @config = '/tmp/dogscaler.yaml'
+      @state = self.load
   	end
 
   	def load
