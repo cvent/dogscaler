@@ -17,7 +17,7 @@ module Dogscaler
         exit 1
       end
       if res[1]['series'].empty?
-        logger.error "No results returned from query #{instance.query}"
+        logger.error "No results returned from query #{query}"
         exit 1
       end
       points = unzip(res)
