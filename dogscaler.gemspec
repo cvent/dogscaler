@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["dgibbons@crowdcompass.com"]
   spec.summary       = %q{Autoscale groups based on datadog queries}
   spec.description   = %q{Autoscale aws groups based on datadog queries}
-  spec.license       = "apache"
+  spec.license       = "Apache-2.0"
   spec.executables << 'dogscaler'
   spec.files         = `git ls-files -z`.split("\x0")
   spec.require_paths = ["lib"]
