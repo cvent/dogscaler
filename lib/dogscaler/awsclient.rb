@@ -8,16 +8,15 @@ module Dogscaler
     include Logging
 
     def initialize
-      @credentials = Aws::SharedCredentials.new(profile_name: Settings.aws['profile'])
       @region = Settings.aws['region']
     end
 
     def asg_client
-      @asg_client ||= Aws::AutoScaling::Client.new(credentials: @credentials, :region => @region)
+      @asg_client ||= Aws::AutoScaling::Client.new(:region => @region)
     end
 
     def ec2_client
-      @ec2_client ||= Aws::EC2::Client.new(credentials: @credentials, :region => @region)
+      @ec2_client ||= Aws::EC2::Client.new(:region => @region)
     end
 
     def get_autoscale_groups
