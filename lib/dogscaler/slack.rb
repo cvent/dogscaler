@@ -12,7 +12,7 @@ module Dogscaler
     end
 
     def send_message(message)
-      @client.chat_postMessage(:channel => @channel, :text => message, :as_user => true)
+      @client.chat_postMessage(:channel => @channel, :text => message)
     end
 
   end
