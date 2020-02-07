@@ -27,6 +27,12 @@ module Settings
     end
 
 end
+
+if ENV['HOME'].nil?
+  require 'etc'
+  ENV['HOME'] = Etc.getpwuid.dir
+end
+
 app_name = "dogscaler"
 overrides = File.expand_path("~/.#{app_name}.yaml")
 Settings.load!(overrides) if File.exists? overrides
