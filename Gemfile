@@ -1,5 +1,5 @@
 source "http://rubygems.org"
-gem 'slack-ruby-client', '~> 0.7'
+gem 'slack-ruby-client', '~> 0.17'
 gem 'dogapi', '~> 1.23'
 gem 'virtus', '~> 1.0'
 gem 'facets', '~> 3.1'
